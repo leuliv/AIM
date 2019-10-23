@@ -1,0 +1,37 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="android:textColorPrimary">@color/primaryTextColor</item>
+        <item name="android:textColorSecondary">@color/secondaryTextColor</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="android:textColorPrimary">@color/icons</item>
+        <item name="android:textColorSecondary">@color/icons</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="FullScreenDialogStyle" parent="Theme.MaterialComponents.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@color/icons</item>
+    </style>
+
+    <style name="Base.Widget.AppCompat.PopupMenu." parent="Base.Widget.AppCompat.PopupMenu">
+        <item name="android:textColor">@color/icons</item>
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+</resources>

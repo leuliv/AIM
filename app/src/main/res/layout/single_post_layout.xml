@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#fff"
+    android:elevation="8dp"
+    android:padding="8dp"
+    android:layout_margin="8dp">
+
+    <TextView
+        android:id="@+id/post_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/post_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:maxLines="5"
+        android:ellipsize="end"
+        android:text="@string/desc"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/by"
+            android:textSize="12sp"
+            android:layout_marginEnd="8dp"/>
+
+        <TextView
+            android:id="@+id/post_uploader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Department"/>
+
+        <TextView
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="."/>
+
+        <TextView
+            android:id="@+id/post_timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="1 hr"/>
+    </LinearLayout>
+
+</LinearLayout>

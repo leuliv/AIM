@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/mail_menu"
+        android:icon="@drawable/ic_mail_black_24dp"
+        android:title="@string/mail"/>
+
+    <item android:id="@+id/home_menu"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/home" />
+
+    <item android:id="@+id/notif_menu"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/notifications"/>
+</menu>

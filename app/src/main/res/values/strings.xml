@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">AIM</string>
+
+    <string name="open">Open navigation drawer</string>
+    <string name="close">Close navigation drawer</string>
+
+    <string name="profile">Profile</string>
+    <string name="settings">Settings</string>
+    <string name="log_out">Log Out</string>
+    <string name="user_name">User Name</string>
+
+    <string name="desc">Secondary line text Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam massa quam.</string>
+    <string name="by">By:</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title">Title</string>
+    <string name="mail">Mail</string>
+    <string name="home">Home</string>
+    <string name="notifications">Notifications</string>
+    <string name="about">About</string>
+    <string name="help">Help</string>
+    <string name="go_to_web">Go To Web</string>
+    <string name="sender_name">Sender Name</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="edit_name">Edit Name</string>
+
+    <string name="main_url">http://192.168.137.1/aduc/</string>
+
+    <string name="pref_file">com.abc.preference_file</string>
+    <string name="pref_login_status">com.abc.preference_login_status</string>
+    <string name="pref_user_name">com.abc.preference_user_name</string>
+    <string name="display_name">Display Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="retype_password">Retype Password</string>
+    <string name="birthday">Birthday</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="college">College</string>
+    <string name="department">Department</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="next">Next</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="forgot_password">Forgot Password?</string>
+
+    <string name="bio">Bio</string>
+    <string name="gender">Gender</string>
+    <string name="image">Image</string>
+</resources>
