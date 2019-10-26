@@ -3,8 +3,8 @@ package com.ivapps.aduc.utils;
 import java.util.Date;
 
 public class User {
-    private String id,userName,userEmail;
-    private int userPhone;
+    private String userName,userEmail;
+    private int id,userPhone;
     private String userCollege,userJob;
     private String userPassword,userProfile,userGender;
     private String userDepartment,userBorn,userForgot;
@@ -13,11 +13,11 @@ public class User {
 
     public User(){}
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

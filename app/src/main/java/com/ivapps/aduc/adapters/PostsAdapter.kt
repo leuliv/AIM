@@ -1,15 +1,18 @@
 package com.ivapps.aduc.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ivapps.aduc.R
+import com.ivapps.aduc.ViewPostActivity
+import com.ivapps.aduc.utils.Post
 
 class PostsAdapter internal constructor(
-    private val context: Context, private val list:Array<Array<String>>
+    private val context: Context, private val list:Array<Post>
 ) :
     RecyclerView.Adapter<PostsAdapter.ViewHolder>() {
 
@@ -25,10 +28,19 @@ class PostsAdapter internal constructor(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, p: Int) {
-        holder.titleView.text = list[p][0]
-        holder.bodyView.text = list[p][1]
-        holder.uploaderView.text = list[p][2]
-        holder.timestampView.text = list[p][3]
+        val post = list[p]
+
+
+        holder.titleView.text = post.post_title
+        holder.bodyView.text = post.post_content
+        holder.uploaderView.text = post.poster_rank
+        holder.timestampView.text = post.post_time
+
+        holder.itemView.setOnClickListener{
+            val intent = Intent(context,ViewPostActivity::class.java)
+            intent.putExtra("post_id", post.id)
+            context.startActivity(intent)
+        }
     }
 
     inner class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {

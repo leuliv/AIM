@@ -15,9 +15,17 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
-import com.ivapps.aduc.helpers.GetUser
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.ivapps.aduc.db.RetrofitClient
 import com.ivapps.aduc.utils.User
 import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.IOException
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     var prevMenuItem: MenuItem? = null
     val PREF_NAME = "ADUC_PREFS"
     val user = User()
+    var notifs = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +67,7 @@ class MainActivity : AppCompatActivity() {
                 positionOffset: Float,
                 positionOffsetPixels: Int
             ) {
+                refresh()
                 when (position) {
                     0 -> supportActionBar!!.title = "Mail"
                     1 -> supportActionBar!!.title = "Timeline"
@@ -106,7 +116,8 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.gotoweb_nav -> {
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.main_url)))
+                    val browserIntent =
+                        Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.main_url)))
                     startActivity(browserIntent)
                     true
                 }
@@ -120,18 +131,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setNotificationBadge() {
-        val notificationsTab = main_bottomnav.findViewById<BottomNavigationItemView>(R.id.notif_menu)
-        val badge = LayoutInflater.from(this).inflate(R.layout.component_tabbar_badge, notificationsTab, false)
-        val t = badge.findViewById<TextView>(R.id.notificationsBadgeTextView)
+        setUpPrefs()
+        if (notifs !=0) {
+            val notificationsTab =
+                main_bottomnav.findViewById<BottomNavigationItemView>(R.id.notif_menu)
+            val badge = LayoutInflater.from(this)
+                .inflate(R.layout.component_tabbar_badge, notificationsTab, false)
+            val t = badge.findViewById<TextView>(R.id.notificationsBadgeTextView)
+            t.text = notifs.toString()
 
-        t.text = "99+"
-
-        notificationsTab.addView(badge)
+            notificationsTab.addView(badge)
+        }
     }
 
-    private fun setUpPrefs(){
+    private fun setUpPrefs() {
         val prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        user.userEmail = prefs.getString("user_email",null)
+        user.userEmail = prefs.getString("user_email", null)
+        user.userAccess = prefs.getString("user_access", null)
+        notifs = prefs.getInt("notifs", 0)
     }
 
     override fun onStart() {
@@ -139,16 +156,157 @@ class MainActivity : AppCompatActivity() {
         refresh()
     }
 
-    private fun refresh(){
+    override fun onResume() {
+        super.onResume()
+        refresh()
+    }
+
+    private fun refresh() {
         setUpPrefs()
-        if (user.userEmail!=null){
-            //GetUser(user.userEmail,this).setUp()
-            setNotificationBadge()
-        }else{
-            startActivity(Intent(this,StartActivity::class.java))
+        if (user.userEmail != null) {
+            val call = RetrofitClient
+                .getInstance()
+                .api
+                .getUser(user.userEmail)
+            call.enqueue(object : Callback<JsonObject> {
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                    val prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+                    val ip = prefs.getString("ip", null)
+                    val r = "Failed to connect to /$ip:80"
+                    Toast.makeText(this@MainActivity, "Failed To Connect", Toast.LENGTH_SHORT).show()
+                    if (r == t.message){
+                        val dialog = NoInternetDialog()
+                        val ft = supportFragmentManager.beginTransaction()
+                        dialog.show(ft, dialog.TAG)
+                    }
+                }
+
+                override fun onResponse(
+                    call: Call<JsonObject>,
+                    response: Response<JsonObject>
+                ) {
+                    try {
+                        val main = JSONObject(Gson().toJson(response.body()))
+                        val user = User()
+
+                        user.userAccess = main.getString("user_access")
+
+                        val editor = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
+                        editor.putString("user_access", user.userAccess)
+                        editor.apply()
+
+                        setUpPrefs()
+
+                        if (user.userAccess != "approved") {
+                            addNotif("not_approved")
+                        }else{
+                            updateCount()
+                        }
+
+                    } catch (e: Exception) {
+                        Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_LONG).show()
+                    }
+                }
+
+            })
+        } else {
+            startActivity(Intent(this@MainActivity, StartActivity::class.java))
             finish()
         }
+
     }
+
+
+    private fun addNotif(type: String) {
+        val body = if (type == "not_approved")
+            "Your account is awaiting approval"
+        else
+            "This is another kind of notification"
+        val link = if (type == "not_approved")
+            "goToSettings"
+        else
+            "goToProfile"
+
+        val day = Date().date
+        val time = "${Date().hours}:${Date().hours}"
+        val date = "$time $day"
+
+        val call = RetrofitClient
+            .getInstance()
+            .api
+            .setNotification(user.userEmail, body, type, date, link, false)
+
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                Toast.makeText(this@MainActivity, t.message, Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(
+                call: Call<JsonObject>,
+                response: Response<JsonObject>
+            ) {
+                try {
+                    val obj = JSONObject(Gson().toJson(response.body()))
+                    val s = obj.getString("status")
+                    when (s) {
+                        "ok" -> {
+                            Toast.makeText(this@MainActivity, "Notif Added", Toast.LENGTH_SHORT)
+                                .show()
+                            updateCount()
+                        }
+                        "exists" -> {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Notif exists",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            updateCount()
+                        }
+                        else -> Toast.makeText(
+                            this@MainActivity,
+                            "Error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } catch (e: IOException) {
+                    Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        })
+    }
+
+    private fun updateCount() {
+        val c = RetrofitClient
+            .getInstance()
+            .api
+            .notificationCount2(user.userEmail)
+
+        c.enqueue(object : Callback<JsonObject> {
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                Toast.makeText(this@MainActivity, t.message, Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+            override fun onResponse(
+                call: Call<JsonObject>,
+                res: Response<JsonObject>
+            ) {
+                val objc = JSONObject(Gson().toJson(res.body()))
+                val count = objc.getInt("count")
+
+                val editor =
+                    getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
+                notifs = count
+                editor.putInt("notifs", count)
+                editor.apply()
+                setNotificationBadge()
+                Toast.makeText(this@MainActivity,count.toString(),Toast.LENGTH_LONG).show()
+            }
+
+        })
+    }
+
 
     inner class ViewPagerAdapter(fm: FragmentManager) :
         FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
@@ -166,9 +324,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun signOut(){
+    private fun signOut() {
         val editor = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
         editor.putString("user_email", null)
+        editor.putString("user_department", null)
         editor.apply()
         refresh()
     }

@@ -33,6 +33,7 @@
                 android:background="@drawable/default_male" />
 
             <TextView
+                android:id="@+id/profile_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -73,6 +74,7 @@
                     android:tint="@color/divider" />
 
                 <TextView
+                    android:id="@+id/profile_bio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -100,6 +102,7 @@
                     android:tint="@color/divider" />
 
                 <TextView
+                    android:id="@+id/profile_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -127,6 +130,7 @@
                     android:tint="@color/divider" />
 
                 <TextView
+                    android:id="@+id/profile_gender"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -153,6 +157,7 @@
                     android:tint="@color/divider" />
 
                 <TextView
+                    android:id="@+id/profile_bday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -179,6 +184,7 @@
                     android:tint="@color/divider" />
 
                 <TextView
+                    android:id="@+id/profile_college"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -205,6 +211,7 @@
                     android:tint="@color/divider" />
 
                 <TextView
+                    android:id="@+id/profile_dept"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"

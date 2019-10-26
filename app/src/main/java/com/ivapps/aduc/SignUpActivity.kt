@@ -9,6 +9,8 @@ import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.ivapps.aduc.db.RetrofitClient
 import com.ivapps.aduc.utils.User
 import kotlinx.android.synthetic.main.activity_sign_up.*
@@ -16,8 +18,9 @@ import kotlinx.android.synthetic.main.sign_up_1.*
 import kotlinx.android.synthetic.main.sign_up_2.*
 import kotlinx.android.synthetic.main.sign_up_3.*
 import kotlinx.android.synthetic.main.sign_up_4.*
-import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -181,23 +184,28 @@ class SignUpActivity : AppCompatActivity() {
             .api
             .signUp(user.userName,user.userEmail,user.userPhone,user.userCollege,user.userJob,user.userPassword,user.userProfile,user.userGender,user.userDepartment,user.userBorn,user.userForgot,user.userBio,user.userSince,user.userAccess)
 
-        call.enqueue(object : retrofit2.Callback<ResponseBody> {
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                 Toast.makeText(this@SignUpActivity, t.message, Toast.LENGTH_SHORT).show()
             }
 
             override fun onResponse(
-                call: Call<ResponseBody>,
-                response: Response<ResponseBody>
+                call: Call<JsonObject>,
+                response: Response<JsonObject>
             ) {
                 try {
-                    val s = response.message()
+                    val obj = JSONObject(Gson().toJson(response.body()))
+                    val s = obj.getString("response")
                     when (s) {
-                        "OK" -> {
+                        "ok" -> {
                             Toast.makeText(this@SignUpActivity, "Account Created", Toast.LENGTH_SHORT).show()
                             val editor =
                                 getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
                             editor.putString("user_email", user.userEmail)
+                            editor.putString("user_department", user.userDepartment)
+                            editor.putString("user_access", user.userAccess)
+                            editor.putString("ip", "192.168.43.210")
+                            editor.putInt("notifs", 0)
                             editor.apply()
                             startActivity(Intent(this@SignUpActivity,MainActivity::class.java))
                             finish()

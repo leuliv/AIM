@@ -5,10 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.ivapps.aduc.db.RetrofitClient
 import kotlinx.android.synthetic.main.activity_sign_in.*
-import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
 
@@ -49,17 +52,17 @@ class SignInActivity : AppCompatActivity() {
             .api
             .signIn(email, pass)
 
-        call.enqueue(object : retrofit2.Callback<ResponseBody> {
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(this@SignInActivity, t.message, Toast.LENGTH_SHORT).show()
+        call.enqueue(object : Callback<JsonObject> {
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                Toast.makeText(this@SignInActivity, t.message, Toast.LENGTH_LONG).show()
             }
 
-            override fun onResponse(
-                call: Call<ResponseBody>,
-                response: Response<ResponseBody>
-            ) {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                 try {
-                    val s = response.message()
+                    val obj = JSONObject(Gson().toJson(response.body()))
+                    val s = obj.getString("status")
+                    val dept = obj.getString("user_department")
+                    val access = obj.getString("user_access")
                     when (s) {
                         "ok" -> {
                             Toast.makeText(
@@ -70,6 +73,10 @@ class SignInActivity : AppCompatActivity() {
                             val editor =
                                 getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
                             editor.putString("user_email", email)
+                            editor.putString("user_department", dept)
+                            editor.putString("user_access", access)
+                            editor.putInt("notifs", 0)
+                            editor.putString("ip", "192.168.43.210")
                             editor.apply()
                             startActivity(Intent(this@SignInActivity, MainActivity::class.java))
                             finish()
